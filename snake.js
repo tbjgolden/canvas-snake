@@ -209,6 +209,8 @@ function generateCanvas (canvasEl) {
   }
 
   document.body.addEventListener('keydown', function (e) {
+    if ([32, 37, 38, 39, 40].contains(e.keyCode)) e.preventDefault();
+
     if (changedDirection) return;
 
     if (e.keyCode === 37) {
