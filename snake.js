@@ -1,4 +1,3 @@
-
 var generation = 0;
 
 function generateCanvas (canvasEls) {
