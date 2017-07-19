@@ -1,13 +1,25 @@
-function generateCanvas (canvasEl) {
-  var ctx = canvasEl.getContext('2d');
 
-  var width = canvasEl.width = canvasEl.parentNode.offsetWidth;
-  var height = canvasEl.height = canvasEl.parentNode.offsetHeight;
+var generation = 0;
 
-  canvasEl.style.width = width + 'px';
-  canvasEl.style.height = height + 'px';
+function generateCanvas (canvasEls) {
+  generation++;
+  var thisGeneration = generation;
 
-  var snake, vx, vy, apple, sx, sy, w, h, p, changedDirection, died, ateApple, score, scoreSquares;
+  var canvasBackground = canvasEls[0];
+  var canvasGame = canvasEls[1];
+
+  var bgctx = canvasBackground.getContext('2d');
+  var ctx = canvasGame.getContext('2d');
+
+  var width = canvasBackground.width = canvasGame.width = canvasGame.parentNode.offsetWidth;
+  var height = canvasBackground.height = canvasGame.height = canvasGame.parentNode.offsetHeight;
+
+  canvasBackground.style.width = width + 'px';
+  canvasBackground.style.height = height + 'px';
+  canvasGame.style.width = width + 'px';
+  canvasGame.style.height = height + 'px';
+
+  var snake, vx, vy, apple, sx, sy, w, h, p, changedDirection, died, ateApple, score, scoreSquares, paused;
 
   var squareDensity = width < 800 ? 0.0004 : 0.0003;
 
@@ -160,8 +172,8 @@ function generateCanvas (canvasEl) {
   function frame () {
     game();
 
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, width, height);
+    bgctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, width, height);
 
     // Score
 
@@ -206,10 +218,28 @@ function generateCanvas (canvasEl) {
 
       ctx.fillRect(x, y, w, h);
     }
+
+    // Background
+    for (var i = 0; i < sx; i++) {
+      for (var j = 0; j < sy; j++) {
+        var gray = Math.floor(7 + Math.floor(14 * Math.random()));
+        bgctx.fillStyle = 'rgb(' + gray + ',' + gray + ',' + gray + ')';
+
+        var x = (i * (width / sx)) + (2 * p) - (i * ((2 * p) / sx));
+        var y = (j * (height / sy)) + (2 * p) - (j * ((2 * p) / sy));
+        var w = (width / sx) - (2 * p) - ((2 * p) / sx);
+        var h = (height / sy) - (2 * p) - ((2 * p) / sy);
+
+        bgctx.fillRect(x, y, w, h);
+      }
+    }
+
+    if (generation === thisGeneration && !paused)
+      setTimeout(boundFrameRequest, 100);
   }
 
   document.body.addEventListener('keydown', function (e) {
-    if ([32, 37, 38, 39, 40].contains(e.keyCode)) e.preventDefault();
+    if ([32, 37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
 
     if (changedDirection) return;
 
@@ -230,16 +260,12 @@ function generateCanvas (canvasEl) {
       vx = 0;
       vy = 1;
     } else if (e.keyCode === 32) {
-      if (interval || interval === 0) {
-        clearInterval(interval)
-        interval = false;
-      } else {
-        boundFrameRequest();
-        interval = setInterval(boundFrameRequest, 100);
-      }
+      paused = !paused;
       changedDirection = false;
+      if (!paused) boundFrameRequest();
       return;
     } else {
+      changedDirection = false;
       return;
     }
 
@@ -248,5 +274,4 @@ function generateCanvas (canvasEl) {
 
   reset();
   frame();
-  interval = setInterval(boundFrameRequest, 100);
 }
