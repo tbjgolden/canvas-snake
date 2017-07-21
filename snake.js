@@ -233,11 +233,18 @@ function generateCanvas (canvasEls) {
       }
     }
 
-    if (generation === thisGeneration && !paused)
+    if (generation === thisGeneration && !paused) {
       setTimeout(boundFrameRequest, 100);
+    } else {
+      document.body.removeEventListener('keydown', keyHandler);
+      document.body.removeEventListener('click', clickHandler);
+    }
   }
 
-  document.body.addEventListener('keydown', function (e) {
+  document.body.addEventListener('keydown', keyHandler);
+  document.body.addEventListener('click', clickHandler);
+
+  function keyHandler (e) {
     if ([32, 37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
 
     if (changedDirection) return;
@@ -269,7 +276,44 @@ function generateCanvas (canvasEls) {
     }
 
     changedDirection = true;
-  });
+  }
+
+  function clickHandler (e) {
+    var x = e.pageX
+    var y = height - e.pageY
+
+    if (x < width && 0 <= y) {
+      e.preventDefault();
+
+      var tr = y > ((-x * (height / width)) + height);
+      var tl = y > x * (height / width);
+
+      if (changedDirection) return;
+
+      if (!tr && tl) {
+        if (vx > 0) return;
+        vx = -1;
+        vy = 0;
+      } else if (tr && tl) {
+        if (vy > 0) return;
+        vx = 0;
+        vy = -1;
+      } else if (tr && !tl) {
+        if (vx < 0) return;
+        vx = 1;
+        vy = 0;
+      } else if (!tr && !tl) {
+        if (vy < 0) return;
+        vx = 0;
+        vy = 1;
+      } else {
+        changedDirection = false;
+        return;
+      }
+
+      changedDirection = true;
+    }
+  }
 
   reset();
   frame();
