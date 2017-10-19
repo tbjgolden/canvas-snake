@@ -18,7 +18,7 @@ function generateCanvas (canvasEls) {
   canvasGame.style.width = width + 'px';
   canvasGame.style.height = height + 'px';
 
-  var snake, vx, vy, apple, sx, sy, w, h, p, changedDirection, died, ateApple, score, scoreSquares, paused;
+  var snake, vx, vy, apple, sx, sy, w, h, p, changedDirection, died, ateApple, score, scoreSquares;
 
   var squareDensity = width < 800 ? 0.0004 : 0.0003;
 
@@ -233,7 +233,7 @@ function generateCanvas (canvasEls) {
       }
     }
 
-    if (generation === thisGeneration && !paused) {
+    if (generation === thisGeneration) {
       setTimeout(boundFrameRequest, 100);
     } else {
       document.body.removeEventListener('keydown', keyHandler);
@@ -265,11 +265,6 @@ function generateCanvas (canvasEls) {
       if (vy < 0) return;
       vx = 0;
       vy = 1;
-    } else if (e.keyCode === 32) {
-      paused = !paused;
-      changedDirection = false;
-      if (!paused) boundFrameRequest();
-      return;
     } else {
       changedDirection = false;
       return;
