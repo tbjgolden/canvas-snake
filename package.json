@@ -1,0 +1,22 @@
+{
+  "name": "canvas-snake",
+  "version": "1.0.0",
+  "description": "Lightweight snake game",
+  "main": "snake.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbjgolden/canvas-snake.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tbjgolden/canvas-snake/issues"
+  },
+  "homepage": "https://github.com/tbjgolden/canvas-snake#readme",
+  "devDependencies": {
+    "standard": "^10.0.3"
+  }
+}
